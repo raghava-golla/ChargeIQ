@@ -1,0 +1,29 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { 
+  background: #030B14; 
+  font-family: sans-serif;
+}
+
+#header {
+  padding: 14px 20px;
+  background: #050C18;
+  border-bottom: 1px solid #0d1f35;
+  color: #F1F5F9;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+#subtitle {
+  font-size: 13px;
+  color: #475569;
+  font-weight: normal;
+}
+
+#map { 
+  height: calc(100vh - 52px); 
+  width: 100%;
+}
