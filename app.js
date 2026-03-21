@@ -1,3 +1,13 @@
+// Common OCM connector type IDs for India
+const CONNECTOR_TYPES = {
+  1: 'Type 1 (J1772)',
+  2: 'CHAdeMO',
+  25: 'Type 2',
+  32: 'CCS (Type 2)',
+  33: 'CCS (Type 1)',
+  27: 'Type 2 (Tethered)',
+  30: 'DC Fast'
+};
 // Initialize map centered on Bengaluru
 const map = L.map('map').setView([12.9716, 77.5946], 12);
 
