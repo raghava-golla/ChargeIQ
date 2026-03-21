@@ -44,7 +44,7 @@ async function loadChargers() {
 
       // Build connector info
 const connectorList = station.Connections?.map(c => 
-  c.ConnectionType?.Title || 'Unknown'
+  CONNECTOR_TYPES[c.ConnectionTypeID] || c.ConnectionType?.Title || 'Unknown'
 ).join(', ') || 'No data';
 
 const powerKW = station.Connections?.[0]?.PowerKW 
