@@ -3,9 +3,10 @@ const CONNECTOR_TYPES = {
   1: 'Type 1 (J1772)',
   2: 'CHAdeMO',
   25: 'Type 2',
-  32: 'CCS (Type 2)',
-  33: 'CCS (Type 1)',
+  32: 'CCS (Type 1)',
+  33: 'CCS (Type 2)',
   27: 'Type 2 (Tethered)',
+  1036: 'Type 2 (Tethered)',
   30: 'DC Fast',
   28: 'Type 3',
   36: 'CCS Combo',
@@ -23,7 +24,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Fetch real Bengaluru chargers from Open Charge Map
 async function loadChargers() {
   const apiKey = 'bf570013-018e-41ff-bc9c-98ccb09fb821';
-  const url = `https://api.openchargemap.io/v3/poi/?output=json&countrycode=IN&latitude=12.9716&longitude=77.5946&distance=15&distanceunit=km&maxresults=100&compact=true&verbose=false&key=${apiKey}`;
+  const url = `https://api.openchargemap.io/v3/poi/?output=json&countrycode=IN&latitude=12.9716&longitude=77.5946&distance=15&distanceunit=km&maxresults=100&compact=false&verbose=false&key=${apiKey}`;
 
   try {
     const response = await fetch(url);
@@ -34,7 +35,9 @@ async function loadChargers() {
       const lat = station.AddressInfo.Latitude;
       const lng = station.AddressInfo.Longitude;
       const name = station.AddressInfo.Title;
-      const operator = station.OperatorInfo?.Title || 'Unknown Operator';
+      const operator = station.OperatorInfo?.Title 
+      || station.OperatorInfo?.WebsiteURL 
+      || 'Unknown Operator';
       const connections = station.Connections?.length || 0;
 
       // Add marker
