@@ -5,7 +5,6 @@ const map = L.map('map').setView([12.9716, 77.5946], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
-
 // Fetch real Bengaluru chargers from Open Charge Map
 async function loadChargers() {
   const apiKey = 'bf570013-018e-41ff-bc9c-98ccb09fb821';
@@ -33,12 +32,25 @@ async function loadChargers() {
         fillOpacity: 0.9
       }).addTo(map);
 
-      // Popup on click
-      marker.bindPopup(`
-        <b>⚡ ${name}</b><br>
-        <span style="color:#666">${operator}</span><br>
-        Connectors: ${connections}
-      `);
+      // Build connector info
+const connectorList = station.Connections?.map(c => 
+  c.ConnectionType?.Title || 'Unknown'
+).join(', ') || 'No data';
+
+const powerKW = station.Connections?.[0]?.PowerKW 
+  ? `${station.Connections[0].PowerKW} kW` 
+  : 'Unknown';
+
+// Popup on click
+marker.bindPopup(`
+  <div style="font-family:sans-serif; min-width:200px">
+    <b style="font-size:14px">⚡ ${name}</b><br><br>
+    <span style="color:#666; font-size:12px">🏢 ${operator}</span><br>
+    <span style="color:#666; font-size:12px">🔌 ${connectorList}</span><br>
+    <span style="color:#666; font-size:12px">⚡ Max power: ${powerKW}</span><br>
+    <span style="color:#666; font-size:12px">📍 Ports: ${connections}</span>
+  </div>
+`);
     });
 
   } catch (error) {
