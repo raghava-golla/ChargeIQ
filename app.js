@@ -6,7 +6,12 @@ const CONNECTOR_TYPES = {
   32: 'CCS (Type 2)',
   33: 'CCS (Type 1)',
   27: 'Type 2 (Tethered)',
-  30: 'DC Fast'
+  30: 'DC Fast',
+  28: 'Type 3',
+  36: 'CCS Combo',
+  38: 'Type 2 (Socket)',
+  3: 'SCAME',
+  8: 'Type 2 (Mennekes)'
 };
 // Initialize map centered on Bengaluru
 const map = L.map('map').setView([12.9716, 77.5946], 12);
