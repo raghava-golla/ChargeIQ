@@ -30,12 +30,10 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
 
 // Fetch chargers
 async function loadChargers() {
-  const apiKey = 'bf570013-018e-41ff-bc9c-98ccb09fb821';
-  const url = `https://api.openchargemap.io/v3/poi/?output=json&countrycode=IN&latitude=12.9716&longitude=77.5946&distance=15&distanceunit=km&maxresults=100&compact=false&verbose=false&key=${apiKey}`;
-
   try {
-    const response = await fetch(url);
-    const data = await response.json();
+   const response = await fetch('http://localhost:3001/api/stations');
+   const json = await response.json();
+   const data = json.stations;
 
     // Update station count in header
     document.getElementById('station-count').textContent = `${data.length} stations`;
