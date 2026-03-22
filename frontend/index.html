@@ -16,6 +16,11 @@
       <span id="logo-text">Charge<span>IQ</span></span>
       <span id="tagline">Bengaluru EV Charging Map</span>
     </div>
+    <div id="filters">
+  <button class="filter-btn active" onclick="filterStations('all')">All</button>
+  <button class="filter-btn" onclick="filterStations('dc')">⚡ DC Fast</button>
+  <button class="filter-btn" onclick="filterStations('ac')">🔌 AC</button>
+</div>
     <div id="station-count">Loading...</div>
   </div>
   <div id="map"></div>

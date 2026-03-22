@@ -125,3 +125,31 @@ body {
   border-color: #38BDF833;
   color: #38BDF8;
 }
+#filters {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #475569;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-btn.active {
+  background: #10B981;
+  border-color: #10B981;
+  color: white;
+  font-weight: 600;
+}
+
+.filter-btn:hover {
+  border-color: #10B981;
+  color: #10B981;
+}

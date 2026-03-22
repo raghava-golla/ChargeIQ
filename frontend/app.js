@@ -28,9 +28,14 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r
   attribution: '© OpenStreetMap © CARTO'
 }).addTo(map);
 
+let allMarkers = [];
+let allStationsData = [];
+
 // Fetch chargers
 async function loadChargers() {
   try {
+   allMarkers.push({ marker, hasDC });
+   allStationsData.push(station);
    const response = await fetch('http://localhost:3001/api/stations');
    const json = await response.json();
    const data = json.stations;
@@ -108,3 +113,26 @@ async function loadChargers() {
 }
 
 loadChargers();
+function filterStations(type) {
+  // Update active button
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Show/hide markers
+  allMarkers.forEach(({ marker, hasDC }) => {
+    if (type === 'all') {
+      marker.addTo(map);
+    } else if (type === 'dc' && hasDC) {
+      marker.addTo(map);
+    } else if (type === 'ac' && !hasDC) {
+      marker.addTo(map);
+    } else {
+      map.removeLayer(marker);
+    }
+  });
+
+  // Update count
+  const visible = type === 'all' ? allMarkers.length
+    : allMarkers.filter(m => type === 'dc' ? m.hasDC : !m.hasDC).length;
+  document.getElementById('station-count').textContent = `${visible} stations`;
+}
