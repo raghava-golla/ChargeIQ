@@ -67,34 +67,22 @@ async function loadChargers() {
 
       marker.bindPopup(`
         <div class="popup-header">
-          <div class="popup-name">${name}</div>
-          <div class="popup-operator">⚡ ${operator}</div>
-        </div>
-        <div class="popup-body">
-          <div class="popup-row"><span>🔌</span><div>${connectorBadges || 'No connector data'}</div></div>
-          <div class="popup-row"><span>⚡</span><strong>Max power: ${powerKW}</strong></div>
-          <div class="popup-row"><span>📍</span><strong>Ports: ${connections.length}</strong></div>
-          <div class="popup-row"><span>🏷</span><strong style="color:${color}">${label} Charger</strong></div>
-        </div>
-        <div class="popup-row">
-           <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
-              target="_blank"
-              style="
-              display: block;
-              width: 100%;
-              padding: 8px;
-              background: #10B981;
-              color: white;
-              text-align: center;
-              border-radius: 8px;
-              text-decoration: none;
-             font-size: 12px;
-             font-weight: 600;
-             margin-top: 4px;
-          ">
-           🧭 Get Directions
-          </a>
-       </div>
+  <div class="popup-name">${name}</div>
+  <div class="popup-operator">⚡ ${operator}</div>
+</div>
+<div class="popup-body">
+  <div class="popup-row"><span>🔌</span><div>${connectorBadges || 'No connector data'}</div></div>
+  <div class="popup-row"><span>⚡</span><strong>Max power: ${powerKW}</strong></div>
+  <div class="popup-row"><span>📍</span><strong>Ports: ${connections.length}</strong></div>
+  <div class="popup-row"><span>🏷</span><strong style="color:${color}">${label} Charger</strong></div>
+  <div class="popup-row">
+    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" 
+       target="_blank"
+       style="display:block;width:100%;padding:8px;background:#10B981;color:white;text-align:center;border-radius:8px;text-decoration:none;font-size:12px;font-weight:600;margin-top:4px;">
+      🧭 Get Directions
+    </a>
+  </div>
+</div>
       `, { className: 'chargeiq-popup' }).addTo(map);
     });
 
