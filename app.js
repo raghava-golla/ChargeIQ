@@ -1,4 +1,4 @@
-// Common OCM connector type IDs for India
+// Connector type mapping
 const CONNECTOR_TYPES = {
   1: 'Type 1 (J1772)',
   2: 'CHAdeMO',
@@ -11,17 +11,24 @@ const CONNECTOR_TYPES = {
   28: 'Type 3',
   36: 'CCS Combo',
   38: 'Type 2 (Socket)',
-  3: 'SCAME', 
+  3: 'SCAME',
   8: 'Type 2 (Mennekes)'
 };
-// Initialize map centered on Bengaluru
-const map = L.map('map').setView([12.9716, 77.5946], 12);
 
-// Add map tiles
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
+// Initialize map
+const map = L.map('map', {
+  zoomControl: false
+}).setView([12.9716, 77.5946], 12);
+
+// Zoom control bottom right
+L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+// Dark map tiles
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '© OpenStreetMap © CARTO'
 }).addTo(map);
-// Fetch real Bengaluru chargers from Open Charge Map
+
+// Fetch chargers
 async function loadChargers() {
   const apiKey = 'bf570013-018e-41ff-bc9c-98ccb09fb821';
   const url = `https://api.openchargemap.io/v3/poi/?output=json&countrycode=IN&latitude=12.9716&longitude=77.5946&distance=15&distanceunit=km&maxresults=100&compact=false&verbose=false&key=${apiKey}`;
@@ -29,50 +36,76 @@ async function loadChargers() {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    console.log('Chargers found:', data.length);
+
+    // Update station count in header
+    document.getElementById('station-count').textContent = `${data.length} stations`;
 
     data.forEach(station => {
       const lat = station.AddressInfo.Latitude;
       const lng = station.AddressInfo.Longitude;
       const name = station.AddressInfo.Title;
-      const operator = station.OperatorInfo?.Title
-      || station.OperatorInfo?.WebsiteURL
-      || 'Unknown Operator';
-      const connections = station.Connections?.length || 0;
+      const operator = station.OperatorInfo?.Title || 'Unknown Operator';
+      const connections = station.Connections || [];
 
-      // Add marker
+      // Check if any DC fast charger
+      const hasDC = connections.some(c => c.LevelID === 3 || c.PowerKW >= 40);
+
+      // Color by speed
+      const color = hasDC ? '#10B981' : '#38BDF8';
+      const label = hasDC ? 'DC Fast' : 'AC';
+
+      // Marker
       const marker = L.circleMarker([lat, lng], {
         radius: 8,
-        fillColor: '#10B981',
+        fillColor: color,
         color: '#030B14',
         weight: 2,
         opacity: 1,
         fillOpacity: 0.9
       }).addTo(map);
 
-      // Build connector info
-const connectorList = station.Connections?.map(c => 
-  CONNECTOR_TYPES[c.ConnectionTypeID] || c.ConnectionType?.Title || 'Unknown'
-).join(', ') || 'No data';
+      // Build connector badges
+      const connectorBadges = connections.map(c => {
+        const name = CONNECTOR_TYPES[c.ConnectionTypeID] 
+          || c.ConnectionType?.Title 
+          || `Type ${c.ConnectionTypeID}`;
+        const isDC = c.CurrentTypeID === 30;
+        return `<span class="popup-badge ${isDC ? '' : 'ac'}">${name}</span>`;
+      }).join('');
 
-const powerKW = station.Connections?.[0]?.PowerKW
-  ? `${station.Connections[0].PowerKW} kW`
-  : 'Unknown';
+      const powerKW = connections[0]?.PowerKW 
+        ? `${connections[0].PowerKW} kW` 
+        : 'Unknown';
 
-// Popup on click
-marker.bindPopup(`
-  <div style="font-family:sans-serif; min-width:200px">
-    <b style="font-size:14px">⚡ ${name}</b><br><br>
-    <span style="color:#666; font-size:12px">🏢 ${operator}</span><br>
-    <span style="color:#666; font-size:12px">🔌 ${connectorList}</span><br>
-    <span style="color:#666; font-size:12px">⚡ Max power: ${powerKW}</span><br>
-    <span style="color:#666; font-size:12px">📍 Ports: ${connections}</span>
-  </div>
-`);
+      // Popup
+      marker.bindPopup(`
+        <div class="popup-header">
+          <div class="popup-name">${name}</div>
+          <div class="popup-operator">⚡ ${operator}</div>
+        </div>
+        <div class="popup-body">
+          <div class="popup-row">
+            <span>🔌</span>
+            <div>${connectorBadges || 'No connector data'}</div>
+          </div>
+          <div class="popup-row">
+            <span>⚡</span>
+            <strong>Max power: ${powerKW}</strong>
+          </div>
+          <div class="popup-row">
+            <span>📍</span>
+            <strong>Ports: ${connections.length}</strong>
+          </div>
+          <div class="popup-row">
+            <span>🏷</span>
+            <strong style="color:${color}">${label} Charger</strong>
+          </div>
+        </div>
+      `, { className: 'chargeiq-popup' }).addTo(map);
     });
 
   } catch (error) {
-    console.error('Error fetching chargers:', error);
+    console.error('Error:', error);
   }
 }
 
