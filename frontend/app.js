@@ -24,7 +24,7 @@ let allMarkers = [];
 
 async function loadChargers() {
   try {
-    const response = await fetch(''https://chargeiq-production.up.railway.app/api/stations'');
+    const response = await fetch('https://chargeiq-production.up.railway.app/api/stations');
     const json = await response.json();
     const data = json.stations;
 
