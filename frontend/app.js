@@ -1,4 +1,3 @@
-// Connector type mapping
 const CONNECTOR_TYPES = {
   1: 'Type 1 (J1772)',
   2: 'CHAdeMO',
@@ -15,32 +14,20 @@ const CONNECTOR_TYPES = {
   8: 'Type 2 (Mennekes)'
 };
 
-// Initialize map
-const map = L.map('map', {
-  zoomControl: false
-}).setView([12.9716, 77.5946], 12);
-
-// Zoom control bottom right
+const map = L.map('map', { zoomControl: false }).setView([12.9716, 77.5946], 12);
 L.control.zoom({ position: 'bottomright' }).addTo(map);
-
-// Dark map tiles
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
   attribution: '© OpenStreetMap © CARTO'
 }).addTo(map);
 
 let allMarkers = [];
-let allStationsData = [];
 
-// Fetch chargers
 async function loadChargers() {
   try {
-   allMarkers.push({ marker, hasDC });
-   allStationsData.push(station);
-   const response = await fetch('http://localhost:3001/api/stations');
-   const json = await response.json();
-   const data = json.stations;
+    const response = await fetch('http://localhost:3001/api/stations');
+    const json = await response.json();
+    const data = json.stations;
 
-    // Update station count in header
     document.getElementById('station-count').textContent = `${data.length} stations`;
 
     data.forEach(station => {
@@ -50,14 +37,10 @@ async function loadChargers() {
       const operator = station.OperatorInfo?.Title || 'Unknown Operator';
       const connections = station.Connections || [];
 
-      // Check if any DC fast charger
       const hasDC = connections.some(c => c.LevelID === 3 || c.PowerKW >= 40);
-
-      // Color by speed
       const color = hasDC ? '#10B981' : '#38BDF8';
       const label = hasDC ? 'DC Fast' : 'AC';
 
-      // Marker
       const marker = L.circleMarker([lat, lng], {
         radius: 8,
         fillColor: color,
@@ -67,42 +50,31 @@ async function loadChargers() {
         fillOpacity: 0.9
       }).addTo(map);
 
-      // Build connector badges
+      // ← store marker HERE after it's created
+      allMarkers.push({ marker, hasDC });
+
       const connectorBadges = connections.map(c => {
-        const name = CONNECTOR_TYPES[c.ConnectionTypeID] 
-          || c.ConnectionType?.Title 
+        const name = CONNECTOR_TYPES[c.ConnectionTypeID]
+          || c.ConnectionType?.Title
           || `Type ${c.ConnectionTypeID}`;
         const isDC = c.CurrentTypeID === 30;
         return `<span class="popup-badge ${isDC ? '' : 'ac'}">${name}</span>`;
       }).join('');
 
-      const powerKW = connections[0]?.PowerKW 
-        ? `${connections[0].PowerKW} kW` 
+      const powerKW = connections[0]?.PowerKW
+        ? `${connections[0].PowerKW} kW`
         : 'Unknown';
 
-      // Popup
       marker.bindPopup(`
         <div class="popup-header">
           <div class="popup-name">${name}</div>
           <div class="popup-operator">⚡ ${operator}</div>
         </div>
         <div class="popup-body">
-          <div class="popup-row">
-            <span>🔌</span>
-            <div>${connectorBadges || 'No connector data'}</div>
-          </div>
-          <div class="popup-row">
-            <span>⚡</span>
-            <strong>Max power: ${powerKW}</strong>
-          </div>
-          <div class="popup-row">
-            <span>📍</span>
-            <strong>Ports: ${connections.length}</strong>
-          </div>
-          <div class="popup-row">
-            <span>🏷</span>
-            <strong style="color:${color}">${label} Charger</strong>
-          </div>
+          <div class="popup-row"><span>🔌</span><div>${connectorBadges || 'No connector data'}</div></div>
+          <div class="popup-row"><span>⚡</span><strong>Max power: ${powerKW}</strong></div>
+          <div class="popup-row"><span>📍</span><strong>Ports: ${connections.length}</strong></div>
+          <div class="popup-row"><span>🏷</span><strong style="color:${color}">${label} Charger</strong></div>
         </div>
       `, { className: 'chargeiq-popup' }).addTo(map);
     });
@@ -113,12 +85,11 @@ async function loadChargers() {
 }
 
 loadChargers();
+
 function filterStations(type) {
-  // Update active button
   document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
   event.target.classList.add('active');
 
-  // Show/hide markers
   allMarkers.forEach(({ marker, hasDC }) => {
     if (type === 'all') {
       marker.addTo(map);
@@ -131,7 +102,6 @@ function filterStations(type) {
     }
   });
 
-  // Update count
   const visible = type === 'all' ? allMarkers.length
     : allMarkers.filter(m => type === 'dc' ? m.hasDC : !m.hasDC).length;
   document.getElementById('station-count').textContent = `${visible} stations`;
