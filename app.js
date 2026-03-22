@@ -11,7 +11,7 @@ const CONNECTOR_TYPES = {
   28: 'Type 3',
   36: 'CCS Combo',
   38: 'Type 2 (Socket)',
-  3: 'SCAME',
+  3: 'SCAME', 
   8: 'Type 2 (Mennekes)'
 };
 // Initialize map centered on Bengaluru
@@ -35,8 +35,8 @@ async function loadChargers() {
       const lat = station.AddressInfo.Latitude;
       const lng = station.AddressInfo.Longitude;
       const name = station.AddressInfo.Title;
-      const operator = station.OperatorInfo?.Title 
-      || station.OperatorInfo?.WebsiteURL 
+      const operator = station.OperatorInfo?.Title
+      || station.OperatorInfo?.WebsiteURL
       || 'Unknown Operator';
       const connections = station.Connections?.length || 0;
 
@@ -55,8 +55,8 @@ const connectorList = station.Connections?.map(c =>
   CONNECTOR_TYPES[c.ConnectionTypeID] || c.ConnectionType?.Title || 'Unknown'
 ).join(', ') || 'No data';
 
-const powerKW = station.Connections?.[0]?.PowerKW 
-  ? `${station.Connections[0].PowerKW} kW` 
+const powerKW = station.Connections?.[0]?.PowerKW
+  ? `${station.Connections[0].PowerKW} kW`
   : 'Unknown';
 
 // Popup on click
