@@ -1,51 +1,36 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { 
-  background: #030B14; 
+  background: #F8FAFC; 
   font-family: 'Segoe UI', sans-serif;
 }
 
 #header {
   padding: 0 20px;
   height: 52px;
-  background: #050C18;
-  border-bottom: 1px solid #0d1f35;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E2E8F0;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-#logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-#logo-icon {
-  font-size: 20px;
-}
-
 #logo-text {
   font-size: 18px;
   font-weight: 700;
-  color: #F1F5F9;
+  color: #0F172A;
   letter-spacing: -0.5px;
-}
-
-#logo-text span {
-  color: #10B981;
 }
 
 #tagline {
   font-size: 11px;
-  color: #334155;
-  font-weight: normal;
+  color: #94A3B8;
 }
 
 #station-count {
   font-size: 11px;
   color: #10B981;
-  background: #10B98118;
+  background: #10B98112;
   border: 1px solid #10B98133;
   border-radius: 20px;
   padding: 4px 12px;
